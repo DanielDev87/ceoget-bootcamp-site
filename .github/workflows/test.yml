@@ -1,5 +1,5 @@
 # .github/workflows/simple-ci.yml
-name: Simple CI Checks
+name: Simple CI/CD Pipeline
 
 on:
   push:
@@ -34,3 +34,21 @@ jobs:
     - name: Check for console errors (simulado)
       run: |
         echo "✅ Chequeo básico completado para ceoget-bootcamp-site"
+
+  deploy:
+    needs: quality-checks  # Espera que pasen las validaciones
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: '.'
+        production-branch: main
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
