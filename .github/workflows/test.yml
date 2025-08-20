@@ -1,0 +1,29 @@
+# .github/workflows/test.yml
+name: Test HTML Site
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Validate HTML syntax
+      uses: actionshub/html5validator@main
+      with:
+        root: "."  # Escanea todos los archivos HTML
+
+    - name: Check for broken links
+      uses: actionshub/link-checker@main
+
+    - name: Run Lighthouse CI (opcional)
+      uses: treosh/lighthouse-ci-action@v9
+      with:
+        uploadArtifacts: true
+        temporaryPublicStorage: true
